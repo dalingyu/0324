@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Project</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/reset.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div>System Manage</div>
+            <div>
+                <ul class="hd-menu">
+                    <li>
+                        <a href="#">OOO</a>
+                    </li>
+                    <li>
+                        <a href="#">登出</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="tabs" id="tabs-app" v-cloak>
+                <ul class="tabs-name">
+                    <template v-for="(item_name, item_index) in items">
+                        <li :class="{active: active == item_index}" @click="setActive(item_index)">
+                            <a href="#">{{ item_name }}</a>
+                        </li>
+                    </template>
+                </ul>
+                <ul class="tabs-content">
+                    <li :class="{active: active == 0}">
+                        <div class="switch-component-wrap">
+                            <span>總開關</span>
+                            <span>
+                                <span class="switch-component" :class="{active: top_banner.enable == 'yes'}"
+                                    @click="setEnable('top_banner_enable')"></span>
+                            </span>
+                        </div>
+                        <template v-for="(item, item_index) in top_banner.items">
+                            <div class="accrodion-component" :class="{active: item.open}">
+                                <div class="accrodion-name" @click="item.open = !item.open">
+                                    橫幅輪撥 {{ item_index + 1 }}</div>
+                                <div class="accrodion-content">
+                                    <div class="top-banner-setting">
+                                        <div>
+                                            <div class="input-item">
+                                                <label for="">圖片連結</label>
+                                                <div class="banner-link-setting">
+                                                    <div>
+                                                        <input type="text" class="input-control" placeholder="請輸入網址"
+                                                            v-model="item.img_link">
+                                                    </div>
+                                                    <div>
+                                                        <select class="input-control" v-model="item.img_link_target">
+                                                            <option value="_blank">另開新頁</option>
+                                                            <option value="_self">直接轉跳</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="input-item">
+                                                <label for="">開始時間</label>
+                                                <div class="banner-datetime">
+                                                    <div>
+                                                        <input type="date" class="input-control"
+                                                            v-model="item.start_date">
+                                                    </div>
+                                                    <div>
+                                                        <input type="time" class="input-control"
+                                                            v-model="item.start_time">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="input-item">
+                                                <label for="">結束時間</label>
+                                                <div class="banner-datetime">
+                                                    <div>
+                                                        <input type="date" class="input-control"
+                                                            v-model="item.end_date">
+                                                    </div>
+                                                    <div>
+                                                        <input type="time" class="input-control"
+                                                            v-model="item.end_time">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="top-banner-image">
+                                                <div>
+                                                    <div class="input-item">
+                                                        <label for="">桌機板圖片</label>
+                                                        <div class="image-select"
+                                                            :style="{'background-image': `url(${item.desktop_img})`}"
+                                                            @click="setImage('top_banner', item_index, 'desktop_img')">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="input-item">
+                                                        <label for="">手機板圖片</label>
+                                                        <div class="image-select"
+                                                            :style="{'background-image': `url(${item.mobile_img})`}"
+                                                            @click="setImage('top_banner', item_index, 'mobile_img')">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item-enable-wrap">
+                                        <div class="switch-component-wrap">
+                                            <span>啟用</span>
+                                            <span>
+                                                <span class="switch-component" :class="{active: item.enable == 'yes'}"
+                                                    @click="item.enable = item.enable == 'yes' ? 'no' : 'yes'"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </li>
+                    <li :class="{active: active == 1}">
+                        <a href="#">Content 2</a>
+                    </li>
+                    <li :class="{active: active == 2}">
+                        <template v-for="(item, item_index) in video.items">
+                            <div class="accrodion-component" :class="{active: item.open}">
+                                <div class="accrodion-name" @click="item.open = !item.open">
+                                    影片 {{ item_index + 1 }}</div>
+                                <div class="accrodion-content">
+                                    <div class="top-banner-setting">
+                                        <div>
+                                            <div class="input-item">
+                                                <label for="">影片連結</label>
+                                                <div>
+                                                    <input type="text" class="input-control" placeholder="請輸入網址"
+                                                        v-model="item.link" @change="loadYoutubeCover(item_index)">
+                                                </div>
+                                            </div>
+                                            <div class="input-item">
+                                                <label for="">影片簡述</label>
+                                                <div>
+                                                    <textarea class="input-control" v-model="item.description"
+                                                        placeholder="請輸入影片簡述"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="top-banner-image">
+                                                <div>
+                                                    <div class="input-item">
+                                                        <label for="">自動封面</label>
+                                                        <div class="image-select"
+                                                            :style="{'background-image': `url(${item.auto_img})`}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="input-item">
+                                                        <label for="">自訂封面</label>
+                                                        <div class="image-select"
+                                                            :style="{'background-image': `url(${item.custom_img})`}"
+                                                            @click="setImage('video', item_index, 'custom_img')">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item-enable-wrap">
+                                        <div class="switch-component-wrap">
+                                            <span>自訂封面</span>
+                                            <span>
+                                                <span class="switch-component" :class="{active: item.custom_cover}"
+                                                    @click="item.custom_cover = !item.custom_cover"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </li>
+                    <li :class="{active: active == 3}">
+                        <div class="partner-top-fn">
+                            <div>
+                                <div class="switch-component-wrap">
+                                    <span>總開關</span>
+                                    <span>
+                                        <span class="switch-component" :class="{active: partner.enable == 'yes'}"
+                                            @click="setEnable('partner_enable')"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div>
+                                <button @click="addPartner">新增夥伴</button>
+                            </div>
+                        </div>
+
+                        <div class="partner-item-wrap">
+                            <template v-for="(item, item_index) in partner.items">
+                                <div class="accrodion-component" :class="{active: item.open}">
+                                    <div class="accrodion-name" @click="item.open = !item.open">
+                                        {{ item.name }}</div>
+                                    <div class="accrodion-content">
+                                        <div class="partner-sort">
+                                            <div>
+                                                <button @click="sortPrevious('partner', item_index)">&lt; 往前</button>
+                                            </div>
+                                            <div>
+                                                <button @click="sortNext('partner', item_index)">往後 &gt;</button>
+                                            </div>
+                                        </div>
+                                        <div class="input-item">
+                                            <label for="">封面</label>
+                                            <div class="image-select"
+                                                :style="{'background-image': `url(${item.cover})`}"
+                                                @click="setImage('partner', item_index, 'cover')">
+                                            </div>
+                                        </div>
+                                        <div class="input-item">
+                                            <label for="">名稱</label>
+                                            <div>
+                                                <input type="text" class="input-control" placeholder="請輸入名稱"
+                                                    v-model="item.name">
+                                            </div>
+                                        </div>
+                                        <div class="input-item">
+                                            <label for="">網址</label>
+                                            <div>
+                                                <input type="text" class="input-control" placeholder="請輸入網址"
+                                                    v-model="item.link">
+                                            </div>
+                                        </div>
+                                        <div class="item-enable-wrap two">
+                                            <div>
+                                                <button class="button delete"
+                                                    @click="deletePartner(item_index)">刪除</button>
+                                            </div>
+                                            <div>
+                                                <div class="switch-component-wrap">
+                                                    <span>顯示</span>
+                                                    <span>
+                                                        <span class="switch-component" :class="{active: item.enable}"
+                                                            @click="item.enable = !item.enable"></span>
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </li>
+                    <li :class="{active: active == 4}">
+                        <a href="#">Content 5</a>
+                    </li>
+                </ul>
+                <div class="tabs-fn">
+                    <button @click="save">儲存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="assets/js/sweetalert2@11.js"></script>
+<script src="assets/js/vue.global.prod.js"></script>
+<script type="module" src="assets/js/main.js"></script>
+
+</html>
